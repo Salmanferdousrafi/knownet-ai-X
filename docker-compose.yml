@@ -1,0 +1,132 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: knownet-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-knownet}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-knownet_password}
+      POSTGRES_DB: ${POSTGRES_DB:-knownet_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U knownet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - knownet-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: knownet-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - knownet-network
+
+  # Chroma Vector Database
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: knownet-chroma
+    environment:
+      CHROMA_DB_IMPL: duckdb+parquet
+    volumes:
+      - chroma_data:/chroma/data
+    ports:
+      - "8001:8000"
+    networks:
+      - knownet-network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: knownet-backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-knownet}:${POSTGRES_PASSWORD:-knownet_password}@postgres:5432/${POSTGRES_DB:-knownet_db}
+      REDIS_URL: redis://redis:6379/0
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DEBUG: "False"
+      APP_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chroma:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    networks:
+      - knownet-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: knownet-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8000
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - knownet-network
+    command: npm run dev
+
+  # Celery Worker
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: knownet-celery
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-knownet}:${POSTGRES_PASSWORD:-knownet_password}@postgres:5432/${POSTGRES_DB:-knownet_db}
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    depends_on:
+      - postgres
+      - redis
+      - backend
+    volumes:
+      - ./backend:/app
+    networks:
+      - knownet-network
+    command: celery -A app.tasks worker --loglevel=info
+
+volumes:
+  postgres_data:
+  redis_data:
+  chroma_data:
+
+networks:
+  knownet-network:
+    driver: bridge
