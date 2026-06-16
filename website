@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KnowNet X - AI Knowledge Intelligence Platform</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --em:#00C853;--em2:#003D29;--gold:#FFD700;--bg:#0D1117;--bg2:#111820;
+  --glass:rgba(0,200,83,0.06);--glass2:rgba(0,200,83,0.12);
+  --border:rgba(0,200,83,0.18);--border2:rgba(0,200,83,0.35);
+  --text:#e8f5e9;--muted:#7aab8a;--dim:#3d5c47;
+  --gold-t:rgba(255,215,0,0.15);--danger:#ef4444;--info:#38bdf8;
+}
+body{font-family:sans-serif;background:var(--bg);color:var(--text);min-height:600px;overflow:hidden;font-size:14px}
+#root{display:flex;height:100vh;position:relative;overflow:hidden}
+
+/* --- Arabic geometric bg --- */
+#geo-bg{position:absolute;inset:0;opacity:0.04;pointer-events:none;z-index:0}
+#geo-bg svg{width:100%;height:100%}
+
+/* --- LANDING --- */
+#landing{display:flex;flex-direction:column;width:100%;z-index:1;transition:opacity .4s;overflow-y:auto}
+.land-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:0.5px solid var(--border);background:var(--bg)}
+.logo{font-size:18px;font-weight:500;color:var(--em);letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--em);box-shadow:0 0 8px var(--em)}
+.nav-links{display:flex;gap:20px;font-size:13px;color:var(--muted)}
+.nav-links span{cursor:pointer;transition:color .2s}
+.nav-links span:hover{color:var(--em)}
+.nav-btn{background:var(--em);color:#000;border:none;padding:7px 18px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.nav-btn:hover{opacity:.85}
+
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;gap:16px;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,200,83,.1);border:0.5px solid var(--border2);color:var(--em);padding:5px 14px;border-radius:20px;font-size:12px}
+.hero h1{font-size:36px;font-weight:500;line-height:1.15;max-width:580px}
+.hero h1 span{background:linear-gradient(90deg,var(--em),var(--gold),var(--em));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200%}
+.hero-sub{font-size:14px;color:var(--muted);max-width:440px;line-height:1.6}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn-primary{background:var(--em);color:#000;border:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;transition:transform .15s}
+.btn-primary:hover{transform:scale(1.03)}
+.btn-outline{background:transparent;color:var(--em);border:0.5px solid var(--border2);padding:10px 22px;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s}
+.btn-outline:hover{background:var(--glass)}
+
+.features-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 24px 20px;z-index:1}
+@media(max-width:768px){.features-row{grid-template-columns:repeat(2,1fr)}}
+.feat-card{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:14px 12px;transition:border-color .2s,transform .2s;cursor:default}
+.feat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.feat-icon{font-size:20px;margin-bottom:8px}
+.feat-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px}
+.feat-desc{font-size:11px;color:var(--muted)}
+
+/* stats bar */
+.stats-bar{display:flex;justify-content:center;gap:32px;padding:16px 24px;border-top:0.5px solid var(--border);background:var(--bg2);flex-wrap:wrap}
+.stat{text-align:center}
+.stat-val{font-size:22px;font-weight:500;color:var(--em)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* --- DASHBOARD --- */
+#dashboard{display:none;width:100%;z-index:1;height:100vh}
+#dashboard.active{display:flex}
+
+.sidebar{width:220px;min-width:220px;border-right:0.5px solid var(--border);display:flex;flex-direction:column;background:var(--bg2);overflow-y:auto}
+.sb-logo{padding:14px 16px;border-bottom:0.5px solid var(--border);font-size:15px;font-weight:500;color:var(--em);display:flex;align-items:center;gap:8px}
+.sb-section{padding:12px 14px 4px;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;margin:2px 8px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s}
+.sb-item:hover{background:var(--glass);color:var(--text)}
+.sb-item.active{background:var(--glass2);color:var(--em);border-left:2px solid var(--em)}
+.sb-item i{font-size:16px}
+.sb-bottom{margin-top:auto;padding:10px;border-top:0.5px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px;border-radius:7px}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--glass2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--em);font-weight:500}
+
+.main-area{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:0.5px solid var(--border);background:var(--bg2)}
+.search-box{flex:1;display:flex;align-items:center;gap:6px;background:var(--glass);border:0.5px solid var(--border);border-radius:8px;padding:6px 12px}
+.search-box input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1}
+.search-box input::placeholder{color:var(--dim)}
+.tb-btn{background:var(--glass);border:0.5px solid var(--border);color:var(--em);width:30px;height:30px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .15s}
+.tb-btn:hover{background:var(--glass2)}
+
+.page-area{flex:1;overflow-y:auto;padding:16px}
+
+/* pages */
+.page{display:none}
+.page.active{display:block}
+.page-title{font-size:18px;font-weight:500;margin-bottom:14px}
+
+/* stat cards */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:768px){.stat-cards{grid-template-columns:repeat(2,1fr)}}
+.sc{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:12px 14px;transition:border-color .2s}
+.sc:hover{border-color:var(--border2)}
+.sc-label{font-size:11px;color:var(--muted);margin-bottom:6px}
+.sc-val{font-size:22px;font-weight:500;color:var(--text)}
+.sc-val span{font-size:11px;color:var(--em);margin-left:4px}
+.sc-icon{float:right;font-size:24px;opacity:.3}
+
+/* activity */
+.panel{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.panel-title{font-size:13px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px;color:var(--em)}
+.act-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);gap:8px}
+.act-item:last-child{border-bottom:none}
+.act-text{font-size:12px}
+.act-sub{font-size:11px;color:var(--muted)}
+.act-time{font-size:11px;color:var(--dim);white-space:nowrap}
+
+/* knowledge */
+.kb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:768px){.kb-grid{grid-template-columns:1fr}}
+.kb-card{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s}
+.kb-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.kb-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.kb-content{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.kb-tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{background:rgba(0,200,83,.1);color:var(--em);border:0.5px solid var(--border);padding:2px 8px;border-radius:12px;font-size:10px}
+
+/* graph */
+#kg-canvas{width:100%;height:340px;border-radius:10px;border:0.5px solid var(--border);background:var(--glass);display:block}
+
+/* research */
+.search-area{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.res-input-row{display:flex;gap:8px}
+.res-input{flex:1;background:rgba(0,200,83,.05);border:0.5px solid var(--border2);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;outline:none}
+.res-input:focus{border-color:var(--em)}
+.res-result{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px}
+.res-title{font-size:13px;font-weight:500;margin-bottom:6px}
+.res-source{font-size:11px;color:var(--muted)}
+.rel-bar{height:4px;background:var(--dim);border-radius:2px;margin-top:8px;overflow:hidden}
+.rel-fill{height:100%;background:linear-gradient(90deg,var(--em),var(--gold));border-radius:2px}
+.ai-typing{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;padding:6px 0}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--em);animation:blink 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+
+/* analytics */
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:120px;padding:0 4px}
+.bar{flex:1;background:linear-gradient(180deg,var(--em),var(--em2));border-radius:3px 3px 0 0;min-width:15px;transition:opacity .2s;position:relative;cursor:pointer}
+.bar:hover{opacity:.7}
+.progress-rows{display:flex;flex-direction:column;gap:8px}
+.prog-row{font-size:12px}
+.prog-label{display:flex;justify-content:space-between;margin-bottom:4px;color:var(--muted)}
+.prog-track{height:5px;background:var(--dim);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px}
+
+/* security */
+.threat-item{display:flex;align-items:center;gap:10px;padding:9px;background:var(--glass);border:0.5px solid var(--border);border-radius:8px;margin-bottom:7px}
+.threat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.threat-info{flex:1;min-width:0}
+.threat-name{font-size:12px;font-weight:500}
+.threat-detail{font-size:11px;color:var(--muted)}
+.threat-badge{font-size:10px;padding:2px 8px;border-radius:12px;font-weight:500}
+.badge-low{background:rgba(0,200,83,.15);color:var(--em)}
+.badge-med{background:rgba(255,215,0,.15);color:var(--gold)}
+.badge-high{background:rgba(239,68,68,.15);color:var(--danger)}
+
+.security-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.sec-metric{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.sec-metric-val{font-size:24px;font-weight:500;margin-bottom:3px}
+.sec-metric-label{font-size:11px;color:var(--muted)}
+
+/* team */
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:768px){.team-grid{grid-template-columns:1fr}}
+.member-card{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
+.member-card:hover{border-color:var(--border2)}
+.member-avatar{width:44px;height:44px;border-radius:50%;background:var(--glass2);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--em);margin:0 auto 8px}
+.member-name{font-size:12px;font-weight:500}
+.member-role{font-size:11px;color:var(--muted);margin-top:2px}
+.member-status{display:inline-flex;align-items:center;gap:4px;font-size:10px;margin-top:6px;color:var(--muted)}
+.status-dot{width:6px;height:6px;border-radius:50%}
+
+/* settings */
+.settings-section{background:var(--glass);border:0.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.settings-title{font-size:13px;font-weight:500;margin-bottom:12px;color:var(--em)}
+.form-row{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.form-label{font-size:11px;color:var(--muted)}
+.form-input{background:rgba(0,200,83,.05);border:0.5px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;width:100%}
+.form-input:focus{border-color:var(--em)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border)}
+.toggle-row:last-child{border:none}
+.toggle-label{font-size:12px;color:var(--text)}
+.toggle{width:32px;height:18px;border-radius:9px;background:var(--dim);position:relative;cursor:pointer;transition:background .2s}
+.toggle.on{background:var(--em)}
+.toggle-thumb{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s}
+.toggle.on .toggle-thumb{left:16px}
+
+/* modal extensions */
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100}
+.modal-overlay.show{display:flex}
+
+/* auth modal */
+#auth-modal{position:absolute;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100}
+#auth-modal.show{display:flex}
+.auth-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;padding:28px;width:320px;position:relative}
+.auth-title{font-size:17px;font-weight:500;text-align:center;margin-bottom:6px}
+.auth-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px}
+.auth-tabs{display:flex;background:var(--glass);border-radius:8px;padding:3px;margin-bottom:16px}
+.auth-tab{flex:1;text-align:center;padding:7px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .2s}
+.auth-tab.active{background:var(--em);color:#000;font-weight:500}
+.auth-field{margin-bottom:10px}
+.auth-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+.auth-field input{width:100%;background:var(--glass);border:0.5px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none}
+.auth-field input:focus{border-color:var(--em)}
+.auth-submit{width:100%;background:var(--em);color:#000;border:none;padding:11px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;margin-top:4px}
+.auth-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
+
+/* notification toast */
+#toast{position:absolute;top:14px;right:14px;background:var(--bg2);border:0.5px solid var(--em);color:var(--em);padding:10px 16px;border-radius:8px;font-size:12px;z-index:200;display:none;transform:translateY(-10px);transition:all .3s}
+#toast.show{display:block;transform:translateY(0)}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div id="root">
+<div id="geo-bg"><svg viewBox="0 0 680 620" xmlns="http://www.w3.org/2000/svg">
+  <defs><pattern id="geo" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse"><polygon points="40,5 75,20 75,60 40,75 5,60 5,20" fill="none" stroke="#00C853" stroke-width="0.5"/><line x1="40" y1="5" x2="40" y2="75" stroke="#00C853" stroke-width="0.3"/><line x1="5" y1="20" x2="75" y2="60" stroke="#00C853" stroke-width="0.3"/><line x1="75" y1="20" x2="5" y2="60" stroke="#00C853" stroke-width="0.3"/></pattern></defs>
+  <rect width="100%" height="100%" fill="url(#geo)"/>
+</svg></div>
+
+<div id="landing">
+  <nav class="land-nav">
+    <div class="logo"><div class="logo-dot"></div>KnowNet X</div>
+    <div class="nav-links">
+      <span onclick="document.getElementById('landing').scrollTo({top: 400, behavior: 'smooth'})">Features</span>
+      <span onclick="showAuth()">Architecture</span>
+      <span onclick="showAuth()">Docs</span>
+      <span onclick="window.open('https://github.com/Salmanferdousrafi/knownet-ai-X', '_blank')">GitHub</span>
+    </div>
+    <button class="nav-btn" onclick="showAuth()">Launch Platform →</button>
+  </nav>
+  <div class="hero">
+    <div class="hero-badge">⚡ AI-Powered Knowledge Intelligence</div>
+    <h1>Transform Information Into <span>Intelligence</span></h1>
+    <p class="hero-sub">KnowNet X combines AI research, knowledge graphs, semantic search, and enterprise security with an Arabic-inspired cyber aesthetic.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showAuth()">🚀 Launch Platform</button>
+      <button class="btn-outline" onclick="window.open('https://github.com/Salmanferdousrafi/knownet-ai-X', '_blank')">⭐ View on GitHub</button>
+    </div>
+  </div>
+  <div class="features-row">
+    <div class="feat-card"><div class="feat-icon">🧠</div><div class="feat-title">AI Research Engine</div><div class="feat-desc">Multi-source research with validation</div></div>
+    <div class="feat-card"><div class="feat-icon">🕸</div><div class="feat-title">Knowledge Graph</div><div class="feat-desc">Visual relationship mapping</div></div>
+    <div class="feat-card"><div class="feat-icon">🔒</div><div class="feat-title">Enterprise Security</div><div class="feat-desc">RBAC, MFA, AES-256 encryption</div></div>
+    <div class="feat-card"><div class="feat-icon">📊</div><div class="feat-title">Analytics Dashboard</div><div class="feat-desc">Usage insights and trend analytics</div></div>
+    <div class="feat-card"><div class="feat-icon">🤖</div><div class="feat-title">Multi-Agent AI</div><div class="feat-desc">Research, memory, learning agents</div></div>
+    <div class="feat-card"><div class="feat-icon">💬</div><div class="feat-title">Team Workspace</div><div class="feat-desc">Real-time collaboration hub</div></div>
+    <div class="feat-card"><div class="feat-icon">📚</div><div class="feat-title">Learning Hub</div><div class="feat-desc">Personalized learning paths</div></div>
+    <div class="feat-card"><div class="feat-icon">🌐</div><div class="feat-title">Semantic Memory</div><div class="feat-desc">Long-term knowledge retention</div></div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val">100%</div><div class="stat-label">Open Source</div></div>
+    <div class="stat"><div class="stat-val">4+</div><div class="stat-label">AI Agents</div></div>
+    <div class="stat"><div class="stat-val">AES-256</div><div class="stat-label">Encryption</div></div>
+    <div class="stat"><div class="stat-val">Enterprise</div><div class="stat-label">Grade Security</div></div>
+    <div class="stat"><div class="stat-val">Next.js 15</div><div class="stat-label">Frontend Stack</div></div>
+    <div class="stat"><div class="stat-val">FastAPI</div><div class="stat-label">Backend Stack</div></div>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="sidebar">
+    <div class="sb-logo"><span style="color:var(--em)">⬡</span> KnowNet X</div>
+    <div class="sb-section">Main</div>
+    <div class="sb-item active" onclick="setPage('dashboard',this)" data-page="dashboard"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+    <div class="sb-item" onclick="setPage('knowledge',this)" data-page="knowledge"><i class="ti ti-book"></i>Knowledge</div>
+    <div class="sb-item" onclick="setPage('graph',this)" data-page="graph"><i class="ti ti-topology-star"></i>Graph</div>
+    <div class="sb-section">Tools</div>
+    <div class="sb-item" onclick="setPage('research',this)" data-page="research"><i class="ti ti-search"></i>Research AI</div>
+    <div class="sb-item" onclick="setPage('analytics',this)" data-page="analytics"><i class="ti ti-chart-bar"></i>Analytics</div>
+    <div class="sb-section">System</div>
+    <div class="sb-item" onclick="setPage('security',this)" data-page="security"><i class="ti ti-shield-check"></i>Security</div>
+    <div class="sb-item" onclick="setPage('team',this)" data-page="team"><i class="ti ti-users"></i>Team</div>
+    <div class="sb-item" onclick="setPage('settings',this)" data-page="settings"><i class="ti ti-settings"></i>Settings</div>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar">SR</div>
+        <div><div style="font-size:12px;font-weight:500" id="user-display-name">Salman R.</div><div style="font-size:10px;color:var(--muted)">Admin</div></div>
+        <span style="margin-left:auto;cursor:pointer;color:var(--muted);font-size:13px" onclick="logout()" title="Logout">⏻</span>
+      </div>
+    </div>
+  </div>
+  <div class="main-area">
+    <div class="topbar">
+      <div class="search-box"><i class="ti ti-search" style="color:var(--dim);font-size:14px"></i><input placeholder="Search items live on this page..." id="global-search" oninput="handleLiveSearch(this.value)"/></div>
+      <button class="tb-btn" title="New entry" onclick="openEntryModal()"><i class="ti ti-plus"></i></button>
+      <button class="tb-btn" title="Notifications" onclick="showToast('3 active alerts isolated inside Security Hub')"><i class="ti ti-bell"></i></button>
+      <button class="tb-btn" title="Back to home" onclick="goHome()"><i class="ti ti-home"></i></button>
+    </div>
+    <div class="page-area">
+      <div class="page active" id="p-dashboard">
+        <div class="page-title">Overview</div>
+        <div class="stat-cards">
+          <div class="sc"><div class="sc-icon">📄</div><div class="sc-label">Knowledge Entries</div><div class="sc-val" id="kb-count-val">248<span>+12%</span></div></div>
+          <div class="sc"><div class="sc-icon">🕸</div><div class="sc-label">Graph Nodes</div><div class="sc-val">1.4K<span>+8%</span></div></div>
+          <div class="sc"><div class="sc-icon">🧠</div><div class="sc-label">AI Queries</div><div class="sc-val">5.2K<span>+31%</span></div></div>
+          <div class="sc"><div class="sc-icon">👥</div><div class="sc-label">Team Members</div><div class="sc-val" id="team-count-val">6<span>active</span></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px">
+          <div class="panel">
+            <div class="panel-title">⚡ Recent Activity</div>
+            <div id="activity-container">
+              <div class="act-item"><div><div class="act-text">Knowledge entry created: "LangGraph Patterns"</div><div class="act-sub">Research Agent • Knowledge Base</div></div><div class="act-time">2m ago</div></div>
+              <div class="act-item"><div><div class="act-text">Security scan completed — 0 threats</div><div class="act-sub">Security Agent • Auto-scan</div></div><div class="act-time">1h ago</div></div>
+              <div class="act-item"><div><div class="act-text">Memory index updated: 1,247 vectors</div><div class="act-sub">Memory Agent • Pinecone DB</div></div><div class="act-time">3h ago</div></div>
+              <div class="act-item"><div><div class="act-text">New team member: Faisal Al-Rashid</div><div class="act-sub">Admin • Team workspace</div></div><div class="act-time">1d ago</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">🤖 Agent Status</div>
+            <div class="act-item"><div class="threat-dot" style="background:#00C853"></div><div><div class="act-text">Research Agent</div><div class="act-sub">Processing 3 queries</div></div><div class="tag" id="agent-research-tag">Active</div></div>
+            <div class="act-item"><div class="threat-dot" style="background:#00C853"></div><div><div class="act-text">Memory Agent</div><div class="act-sub">Indexing 47 docs</div></div><div class="tag" id="agent-memory-tag">Active</div></div>
+            <div class="act-item"><div class="threat-dot" id="agent-learning-dot" style="background:#FFD700"></div><div><div class="act-text">Learning Agent</div><div class="act-sub" id="agent-learning-sub">Idle — awaiting input</div></div><div class="tag" id="agent-learning-tag" style="color:var(--gold);border-color:var(--gold-t);background:var(--gold-t)">Idle</div></div>
+            <div class="act-item"><div class="threat-dot" style="background:#00C853"></div><div><div class="act-text">Security Agent</div><div class="act-sub">Monitoring 24/7</div></div><div class="tag" id="agent-security-tag">Active</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" id="p-knowledge">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div class="page-title" style="margin:0">Knowledge Base</div>
+          <button class="btn-primary" onclick="openEntryModal()">+ New Entry</button>
+        </div>
+        <div class="kb-grid" id="kb-cards-grid">
+          <div class="kb-card"><div class="kb-title">LangGraph Multi-Agent Patterns</div><div class="kb-content">Design patterns for building resilient multi-agent workflows using LangGraph's state machine primitives, including checkpointing and human-in-the-loop integrations.</div><div class="kb-tags"><span class="tag">AI</span><span class="tag">LangGraph</span><span class="tag">Agents</span></div></div>
+          <div class="kb-card"><div class="kb-title">Arabic Geometric Design Principles</div><div class="kb-content">Mathematical foundations of Islamic geometric patterns — tessellations, symmetry groups, and their application in modern UI design systems for cultural identity.</div><div class="kb-tags"><span class="tag">Design</span><span class="tag">Culture</span></div></div>
+          <div class="kb-card"><div class="kb-title">Vector Databases: Chroma vs Pinecone</div><div class="kb-content">Comparative analysis of vector database solutions for RAG pipelines. Benchmarks, cost analysis, and migration guide for production deployments at enterprise scale.</div><div class="kb-tags"><span class="tag">Database</span><span class="tag">RAG</span><span class="tag">AI</span></div></div>
+          <div class="kb-card"><div class="kb-title">FastAPI Security Patterns</div><div class="kb-content">OAuth2, JWT tokens, RBAC middleware, and rate limiting implementation patterns for FastAPI applications with PostgreSQL and Redis integration.</div><div class="kb-tags"><span class="tag">Security</span><span class="tag">FastAPI</span><span class="tag">Python</span></div></div>
+          <div class="kb-card"><div class="kb-title">Knowledge Graph Schema Design</div><div class="kb-content">Entity-relationship modeling for knowledge graphs — node types, edge properties, traversal algorithms, and visualization strategies for semantic networks.</div><div class="kb-tags"><span class="tag">Graph</span><span class="tag">Schema</span></div></div>
+          <div class="kb-card"><div class="kb-title">Semantic Memory Architecture</div><div class="kb-content">Long-term memory systems for AI agents using embedding models, cosine similarity search, and temporal decay functions for relevance ranking.</div><div class="kb-tags"><span class="tag">Memory</span><span class="tag">Embeddings</span><span class="tag">AI</span></div></div>
+        </div>
+      </div>
+
+      <div class="page" id="p-graph">
+        <div class="page-title">Knowledge Graph</div>
+        <div style="position:relative;">
+          <canvas id="kg-canvas"></canvas>
+          <div id="graph-node-overlay" style="position:absolute; top:10px; left:10px; background:var(--bg2); border:0.5px solid var(--border2); padding:8px 12px; border-radius:6px; display:none; pointer-events:none; font-size:12px;"></div>
+        </div>
+        <div class="panel" style="margin-top:10px">
+          <div class="panel-title">🕸 Graph Statistics</div>
+          <div style="display:flex;gap:20px;flex-wrap:wrap">
+            <div class="stat"><div class="stat-val" style="font-size:18px">1,428</div><div class="stat-label">Total nodes</div></div>
+            <div class="stat"><div class="stat-val" style="font-size:18px">3,841</div><div class="stat-label">Connections</div></div>
+            <div class="stat"><div class="stat-val" style="font-size:18px">0.73</div><div class="stat-label">Avg. cluster coeff.</div></div>
+            <div class="stat"><div class="stat-val" style="font-size:18px">6</div><div class="stat-label">Communities</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" id="p-research">
+        <div class="page-title">Research AI</div>
+        <div class="search-area">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Powered by multi-agent research pipeline • LangGraph + OpenAI</div>
+          <div class="res-input-row">
+            <input class="res-input" id="research-input" placeholder="Enter your research query (e.g. 'latest trends in knowledge graphs')..." onkeydown="handleResearch(event)"/>
+            <button class="btn-primary" onclick="runResearch()">Search ↗</button>
+          </div>
+        </div>
+        <div id="research-results"></div>
+      </div>
+
+      <div class="page" id="p-analytics">
+        <div class="page-title">Analytics</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div class="panel">
+            <div class="panel-title">📈 Usage — Last 7 Days</div>
+            <div class="chart-bars" id="usage-chart"></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim);padding-top:4px">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">🤖 AI Query Distribution</div>
+            <div class="progress-rows">
+              <div class="prog-row"><div class="prog-label"><span>Research</span><span>45%</span></div><div class="prog-track"><div class="prog-fill" style="width:45%;background:var(--em)"></div></div></div>
+              <div class="prog-row"><div class="prog-label"><span>Memory Retrieval</span><span>28%</span></div><div class="prog-track"><div class="prog-fill" style="width:28%;background:var(--info)"></div></div></div>
+              <div class="prog-row"><div class="prog-label"><span>Graph Traversal</span><span>18%</span></div><div class="prog-track"><div class="prog-fill" style="width:18%;background:var(--gold)"></div></div></div>
+              <div class="prog-row"><div class="prog-label"><span>Security Scans</span><span>9%</span></div><div class="prog-track"><div class="prog-fill" style="width:9%;background:var(--danger)"></div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-cards">
+          <div class="sc"><div class="sc-label">Avg. response time</div><div class="sc-val">1.2s<span style="color:var(--em)">fast</span></div></div>
+          <div class="sc"><div class="sc-label">Uptime (30d)</div><div class="sc-val">99.9%</div></div>
+          <div class="sc"><div class="sc-label">Tokens used</div><div class="sc-val">2.4M<span>this month</span></div></div>
+          <div class="sc"><div class="sc-label">Memory vectors</div><div class="sc-val">48.3K</div></div>
+        </div>
+      </div>
+
+      <div class="page" id="p-security">
+        <div class="page-title">Security Hub</div>
+        <div class="security-grid">
+          <div class="sec-metric"><div class="sec-metric-val" style="color:var(--em)">99.8%</div><div class="sec-metric-label">Threat Block Rate</div></div>
+          <div class="sec-metric"><div class="sec-metric-val" style="color:var(--gold)" id="alert-counter-box">3</div><div class="sec-metric-label">Active Alerts</div></div>
+          <div class="sec-metric"><div class="sec-metric-val" style="color:var(--em)">AES-256</div><div class="sec-metric-label">Encryption</div></div>
+          <div class="sec-metric"><div class="sec-metric-val" style="color:var(--em)" id="mfa-status-box">✓ MFA</div><div class="sec-metric-label">Auth Factor</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🚨 Threat Log</div>
+          <div id="threat-log-container">
+            <div class="threat-item"><div class="threat-dot" style="background:var(--gold)"></div><div class="threat-info"><div class="threat-name">Brute-force attempt blocked</div><div class="threat-detail">IP: 185.220.101.47 · 23 attempts · 2026-06-16 08:12</div></div><span class="threat-badge badge-med">Medium</span></div>
+            <div class="threat-item"><div class="threat-dot" style="background:var(--em)"></div><div class="threat-info"><div class="threat-name">API rate limit triggered</div><div class="threat-detail">User: anon_4821 · /api/v1/research · 503 req/min</div></div><span class="threat-badge badge-low">Low</span></div>
+            <div class="threat-item"><div class="threat-dot" style="background:var(--danger)"></div><div class="threat-info"><div class="threat-name">Suspicious JWT token reuse</div><div class="threat-detail">Token ID: jti_98f3ac · 3 different IP addresses</div></div><span class="threat-badge badge-high">High</span></div>
+            <div class="threat-item"><div class="threat-dot" style="background:var(--em)"></div><div class="threat-info"><div class="threat-name">SQL injection probe — blocked</div><div class="threat-detail">Payload sanitized · WAF rule #4821 triggered</div></div><span class="threat-badge badge-low">Low</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" id="p-team">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div class="page-title" style="margin:0">Team Workspace</div>
+          <button class="btn-primary" onclick="openTeamModal()">+ Invite Member</button>
+        </div>
+        <div class="team-grid" id="team-cards-grid">
+          <div class="member-card"><div class="member-avatar">SR</div><div class="member-name">Salman Rafi</div><div class="member-role">Admin · Full Access</div><div class="member-status"><div class="status-dot" style="background:var(--em)"></div>Online</div></div>
+          <div class="member-card"><div class="member-avatar">FA</div><div class="member-name">Faisal Al-Rashid</div><div class="member-role">Researcher</div><div class="member-status"><div class="status-dot" style="background:var(--em)"></div>Online</div></div>
+          <div class="member-card"><div class="member-avatar">ZK</div><div class="member-name">Zara Khan</div><div class="member-role">Knowledge Manager</div><div class="member-status"><div class="status-dot" style="background:var(--gold)"></div>Away</div></div>
+          <div class="member-card"><div class="member-avatar">AH</div><div class="member-name">Ahmed Hassan</div><div class="member-role">Security Analyst</div><div class="member-status"><div class="status-dot" style="background:var(--em)"></div>Online</div></div>
+          <div class="member-card"><div class="member-avatar">NJ</div><div class="member-name">Nadia Jabri</div><div class="member-role">Data Scientist</div><div class="member-status"><div class="status-dot" style="background:var(--dim)"></div>Offline</div></div>
+          <div class="member-card"><div class="member-avatar">MR</div><div class="member-name">Mariam Rashidi</div><div class="member-role">Frontend Dev</div><div class="member-status"><div class="status-dot" style="background:var(--em)"></div>Online</div></div>
+        </div>
+      </div>
+
+      <div class="page" id="p-settings">
+        <div class="page-title">Settings</div>
+        <div class="settings-section">
+          <div class="settings-title">Account</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="form-row"><div class="form-label">Full Name</div><input class="form-input" id="set-full-name" value="Salman Ferdous Rafi"/></div>
+            <div class="form-row"><div class="form-label">Email</div><input class="form-input" id="set-email" value="admin@knownet.ai"/></div>
+            <div class="form-row"><div class="form-label">Username</div><input class="form-input" id="set-username" value="@salmanrafi"/></div>
+            <div class="form-row"><div class="form-label">Timezone</div><input class="form-input" value="Asia/Dhaka (UTC+6)"/></div>
+          </div>
+          <button class="btn-primary" style="margin-top:8px" onclick="saveAccountSettings()">Save Changes</button>
+        </div>
+        <div class="settings-section">
+          <div class="settings-title">AI Agents</div>
+          <div class="toggle-row"><span class="toggle-label">Research Agent — auto-search on query</span><div class="toggle on" onclick="toggleAgentSetting(this, 'Research')"><div class="toggle-thumb"></div></div></div>
+          <div class="toggle-row"><span class="toggle-label">Memory Agent — index new entries</span><div class="toggle on" onclick="toggleAgentSetting(this, 'Memory')"><div class="toggle-thumb"></div></div></div>
+          <div class="toggle-row"><span class="toggle-label">Learning Agent — personalized paths</span><div class="toggle" id="learning-agent-toggle" onclick="toggleAgentSetting(this, 'Learning')"><div class="toggle-thumb"></div></div></div>
+          <div class="toggle-row"><span class="toggle-label">Security Agent — 24/7 monitoring</span><div class="toggle on" onclick="toggleAgentSetting(this, 'Security')"><div class="toggle-thumb"></div></div></div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-title">Security</div>
+          <div class="toggle-row"><span class="toggle-label">Multi-factor authentication (MFA)</span><div class="toggle on" onclick="toggleMFA(this)"><div class="toggle-thumb"></div></div></div>
+          <div class="toggle-row"><span class="toggle-label">Audit logging</span><div class="toggle on" onclick="toggleGenericSecurity(this, 'Audit logging')"><div class="toggle-thumb"></div></div></div>
+          <div class="toggle-row"><span class="toggle-label">API rate limiting</span><div class="toggle on" onclick="toggleGenericSecurity(this, 'API rate limiting')"><div class="toggle-thumb"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="auth-modal">
+  <div class="auth-card">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <div style="text-align:center;font-size:28px;margin-bottom:8px">⬡</div>
+    <div class="auth-title">KnowNet X</div>
+    <div class="auth-sub">AI Knowledge Intelligence Platform</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuth('login',this)">Sign In</div>
+      <div class="auth-tab" onclick="switchAuth('register',this)">Register</div>
+    </div>
+    <div id="auth-login">
+      <div class="auth-field"><label>Email</label><input type="email" id="login-email" placeholder="admin@knownet.ai" value="admin@knownet.ai"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" value="password"/></div>
+      <button class="auth-submit" onclick="doLogin()">Sign In →</button>
+      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">Demo: click sign-in directly</div>
+    </div>
+    <div id="auth-register" style="display:none">
+      <div class="auth-field"><label>Full Name</label><input type="text" id="reg-name" placeholder="Your name"/></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="reg-email" placeholder="you@example.com"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="reg-pass" placeholder="Create password"/></div>
+      <button class="auth-submit" onclick="doRegister()">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<div id="entry-modal" class="modal-overlay">
+  <div class="auth-card">
+    <button class="auth-close" onclick="closeEntryModal()">✕</button>
+    <div class="auth-title" style="margin-bottom:12px;">Add Knowledge Entry</div>
+    <div class="auth-field"><label>Entry Title</label><input type="text" id="entry-title" placeholder="e.g. Advanced RAG Systems"/></div>
+    <div class="auth-field"><label>Content Abstract</label><input type="text" id="entry-desc" placeholder="Brief technical summary..."/></div>
+    <div class="auth-field"><label>Tags (Comma separated)</label><input type="text" id="entry-tags" placeholder="AI, RAG, Architecture"/></div>
+    <button class="auth-submit" onclick="saveNewEntry()">Commit to Graph →</button>
+  </div>
+</div>
+
+<div id="team-modal" class="modal-overlay">
+  <div class="auth-card">
+    <button class="auth-close" onclick="closeTeamModal()">✕</button>
+    <div class="auth-title" style="margin-bottom:12px;">Invite Team Member</div>
+    <div class="auth-field"><label>Full Name</label><input type="text" id="team-name" placeholder="Faisal Al-Rashid"/></div>
+    <div class="auth-field"><label>Role Title</label><input type="text" id="team-role" placeholder="Core ML Engineer"/></div>
+    <button class="auth-submit" onclick="saveTeamMember()">Send Invitation →</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+</div>
+
+<script>
+// Application State
+let nodesGlobal = [];
+let targetPageGlobal = 'dashboard';
+
+function showAuth(){document.getElementById('auth-modal').classList.add('show')}
+function closeAuth(){document.getElementById('auth-modal').classList.remove('show')}
+function switchAuth(t,el){
+  document.querySelectorAll('.auth-tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('auth-login').style.display=t==='login'?'block':'none';
+  document.getElementById('auth-register').style.display=t==='register'?'block':'none';
+}
+
+function doLogin(){
+  closeAuth();
+  document.getElementById('landing').style.display='none';
+  const d=document.getElementById('dashboard');
+  d.classList.add('active');
+  d.style.display='flex';
+  setTimeout(()=>{
+    initGraph();
+    buildBars();
+    updateDashboardCounters();
+  },100);
+  showToast('Welcome back to KnowNet X!');
+}
+
+function doRegister(){
+  const name = document.getElementById('reg-name').value.trim() || 'New User';
+  document.getElementById('user-display-name').textContent = name;
+  document.getElementById('set-full-name').value = name;
+  document.getElementById('set-username').value = '@' + name.toLowerCase().replace(/\s+/g, '');
+  doLogin();
+}
+
+function goHome(){
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('dashboard').classList.remove('active');
+  document.getElementById('landing').style.display='flex';
+}
+function logout(){goHome();showToast('Signed out successfully.')}
+
+function setPage(id,el){
+  targetPageGlobal = id;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  el.classList.add('active');
+  
+  // Reset live search placeholder contextually
+  document.getElementById('global-search').value = '';
+  handleLiveSearch('');
+
+  if(id==='graph') setTimeout(initGraph,50);
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// Global Live Context Filter
+function handleLiveSearch(val) {
+  const query = val.toLowerCase().trim();
+  
+  if (targetPageGlobal === 'knowledge') {
+    const cards = document.querySelectorAll('#kb-cards-grid .kb-card');
+    cards.forEach(card => {
+      const title = card.querySelector('.kb-title').textContent.toLowerCase();
+      const text = card.querySelector('.kb-content').textContent.toLowerCase();
+      if (title.includes(query) || text.includes(query)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  } 
+  else if (targetPageGlobal === 'team') {
+    const members = document.querySelectorAll('#team-cards-grid .member-card');
+    members.forEach(member => {
+      const name = member.querySelector('.member-name').textContent.toLowerCase();
+      const role = member.querySelector('.member-role').textContent.toLowerCase();
+      if (name.includes(query) || role.includes(query)) {
+        member.style.display = 'block';
+      } else {
+        member.style.display = 'none';
+      }
+    });
+  }
+  else if (targetPageGlobal === 'security') {
+    const threats = document.querySelectorAll('#threat-log-container .threat-item');
+    threats.forEach(item => {
+      const name = item.querySelector('.threat-name').textContent.toLowerCase();
+      const details = item.querySelector('.threat-detail').textContent.toLowerCase();
+      if (name.includes(query) || details.includes(query)) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+}
+
+// Modals Functional Mechanics
+function openEntryModal(){document.getElementById('entry-modal').classList.add('show')}
+function closeEntryModal(){document.getElementById('entry-modal').classList.remove('show')}
+function saveNewEntry(){
+  const title = document.getElementById('entry-title').value.trim();
+  const desc = document.getElementById('entry-desc').value.trim();
+  const tagsText = document.getElementById('entry-tags').value.trim();
+  
+  if(!title || !desc) {
+    showToast('Please specify an entry title and description.');
+    return;
+  }
+  
+  // Construct tags
+  const tags = tagsText ? tagsText.split(',') : ['AI', 'Dynamic'];
+  let tagsHtml = tags.map(t => `<span class="tag">${t.trim()}</span>`).join('');
+  
+  // Append item to Knowledge interface
+  const grid = document.getElementById('kb-cards-grid');
+  const newCard = document.createElement('div');
+  newCard.className = 'kb-card';
+  newCard.innerHTML = `<div class="kb-title">${title}</div><div class="kb-content">${desc}</div><div class="kb-tags">${tagsHtml}</div>`;
+  grid.prepend(newCard);
+  
+  // Push live item activity to system log
+  prependActivity(`Knowledge entry created: "${title}"`, 'Research Agent • Memory Base');
+  
+  // Update state counters
+  updateDashboardCounters();
+  closeEntryModal();
+  showToast('Entry successfully committed into Knowledge system!');
+  
+  // Clear form fields
+  document.getElementById('entry-title').value = '';
+  document.getElementById('entry-desc').value = '';
+  document.getElementById('entry-tags').value = '';
+}
+
+function openTeamModal(){document.getElementById('team-modal').classList.add('show')}
+function closeTeamModal(){document.getElementById('team-modal').classList.remove('show')}
+function saveTeamMember(){
+  const name = document.getElementById('team-name').value.trim();
+  const role = document.getElementById('team-role').value.trim();
+  
+  if(!name || !role) {
+    showToast('Please specify name and operational assignment profile.');
+    return;
+  }
+  
+  // Generate initials
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2);
+  
+  const grid = document.getElementById('team-cards-grid');
+  const card = document.createElement('div');
+  card.className = 'member-card';
+  card.innerHTML = `<div class="member-avatar">${initials}</div><div class="member-name">${name}</div><div class="member-role">${role}</div><div class="member-status"><div class="status-dot" style="background:var(--em)"></div>Online</div>`;
+  grid.appendChild(card);
+  
+  prependActivity(`New team member: ${name}`, `Admin • Provisioned Role: ${role}`);
+  updateDashboardCounters();
+  closeTeamModal();
+  showToast(`Invitation vector routed successfully to ${name}`);
+  
+  document.getElementById('team-name').value = '';
+  document.getElementById('team-role').value = '';
+}
+
+function prependActivity(text, sub) {
+  const container = document.getElementById('activity-container');
+  if (container) {
+    const act = document.createElement('div');
+    act.className = 'act-item';
+    act.innerHTML = `<div><div class="act-text">${text}</div><div class="act-sub">${sub}</div></div><div class="act-time">Just now</div>`;
+    container.prepend(act);
+  }
+}
+
+function updateDashboardCounters() {
+  const kbCount = document.querySelectorAll('#kb-cards-grid .kb-card').length;
+  const teamCount = document.querySelectorAll('#team-cards-grid .member-card').length;
+  
+  if (document.getElementById('kb-count-val')) {
+    document.getElementById('kb-count-val').innerHTML = `${kbCount}<span>+15%</span>`;
+  }
+  if (document.getElementById('team-count-val')) {
+    document.getElementById('team-count-val').innerHTML = `${teamCount}<span>active</span>`;
+  }
+}
+
+// Research AI Automation Engine
+function handleResearch(e){if(e.key==='Enter')runResearch();}
+let researching=false;
+function runResearch(){
+  if(researching)return;
+  researching=true;
+  const q=document.getElementById('research-input').value.trim()||'knowledge graph AI applications';
+  const el=document.getElementById('research-results');
+  el.innerHTML='<div class="ai-typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span style="color:var(--muted);font-size:12px">Research Agent processing: "'+q+'"</span></div>';
+  const results=[
+    {title:'Knowledge Graphs in Enterprise AI Systems',source:'arxiv.org/abs/2401.xxxxx',rel:0.97,summary:'Comprehensive review of knowledge graph integration patterns in enterprise AI pipelines, covering entity resolution, semantic search, and RAG architectures.'},
+    {title:'Multi-Agent Research Frameworks with LangGraph',source:'langchain.com/blog',rel:0.91,summary:'Deep dive into building resilient research agents using LangGraph\'s stateful execution model with human-in-the-loop checkpointing.'},
+    {title:'Semantic Memory for Long-Context AI Applications',source:'openai.com/research',rel:0.85,summary:'Techniques for persistent memory in AI systems — vector indexing, relevance decay functions, and retrieval-augmented generation at scale.'},
+  ];
+  setTimeout(()=>{
+    el.innerHTML=results.map(r=>`<div class="res-result"><div class="res-title">${r.title}</div><div style="font-size:11px;color:var(--muted);margin:4px 0">${r.summary}</div><div style="display:flex;align-items:center;justify-content:space-between"><span class="res-source">📄 ${r.source}</span><span style="font-size:11px;color:var(--em)">${Math.round(r.rel*100)}% relevant</span></div><div class="rel-bar"><div class="rel-fill" style="width:${r.rel*100}%"></div></div></div>`).join('');
+    researching=false;
+    prependActivity(`Executed Deep AI Query: "${q}"`, 'Research Agent Engine Pipeline');
+  },1800);
+}
+
+// Toggle Interactions & System Configurations Synchronizer
+function toggleAgentSetting(element, agentName) {
+  element.classList.toggle('on');
+  const isEnabled = element.classList.contains('on');
+  showToast(`${agentName} Agent parameters reconfigured: ${isEnabled ? 'ENABLED' : 'DISABLED'}`);
+  
+  // Reflect state live in Agent Status Dashboard UI
+  if (agentName === 'Learning') {
+    const statusTag = document.getElementById('agent-learning-tag');
+    const dot = document.getElementById('agent-learning-dot');
+    const sub = document.getElementById('agent-learning-sub');
+    if (isEnabled) {
+      statusTag.textContent = 'Active';
+      statusTag.style.cssText = "color:var(--em); border-color:var(--border); background:rgba(0,200,83,.1);";
+      dot.style.background = '#00C853';
+      sub.textContent = 'Mapping learning tracks';
+    } else {
+      statusTag.textContent = 'Disabled';
+      statusTag.style.cssText = "color:var(--dim); border-color:var(--dim); background:transparent;";
+      dot.style.background = 'var(--dim)';
+      sub.textContent = 'System context deactivated';
+    }
+  }
+}
+
+function toggleMFA(element) {
+  element.classList.toggle('on');
+  const isEnabled = element.classList.contains('on');
+  const box = document.getElementById('mfa-status-box');
+  if (box) {
+    box.textContent = isEnabled ? '✓ MFA' : '✕ OFF';
+    box.style.color = isEnabled ? 'var(--em)' : 'var(--danger)';
+  }
+  showToast(`Multi-Factor Authentication (MFA) layer: ${isEnabled ? 'ACTIVE' : 'DEACTIVATED'}`);
+}
+
+function toggleGenericSecurity(element, label) {
+  element.classList.toggle('on');
+  const isEnabled = element.classList.contains('on');
+  showToast(`Security Protocol Matrix [${label}]: ${isEnabled ? 'ONLINE' : 'OFFLINE'}`);
+}
+
+function saveAccountSettings() {
+  const name = document.getElementById('set-full-name').value;
+  document.getElementById('user-display-name').textContent = name;
+  showToast('Account modifications saved and replicated across local registry.');
+}
+
+// Interactive Knowledge Graph Core Logic
+let canvasAnimationId = null;
+function initGraph(){
+  const canvas=document.getElementById('kg-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  
+  // Set dimensions correctly
+  canvas.width=canvas.offsetWidth;
+  canvas.height=canvas.offsetHeight;
+  const W=canvas.width,H=canvas.height;
+  
+  const nodes=[
+    {id:0,x:W*.5,y:H*.5,r:16,label:'KnowNet',color:'#00C853',desc:'System Kernel Routing Architecture'},
+    {id:1,x:W*.25,y:H*.3,r:10,label:'AI Research',color:'#38bdf8',desc:'LangGraph Multi-Source Retrieval Framework'},
+    {id:2,x:W*.75,y:H*.3,r:10,label:'Knowledge Graph',color:'#FFD700',desc:'Asynchronous Entity Relationship Mapping'},
+    {id:3,x:W*.2,y:H*.7,r:9,label:'Security',color:'#ef4444',desc:'Enterprise Threat Abatement Isolation Blockade'},
+    {id:4,x:W*.8,y:H*.7,r:9,label:'Memory',color:'#a78bfa',desc:'High-density Semantic Vector Space Indexes'},
+    {id:5,x:W*.5,y:H*.15,r:8,label:'LangGraph',color:'#38bdf8',desc:'State Machine Behavioral Execution Workflows'},
+    {id:6,x:W*.15,y:H*.5,r:8,label:'RBAC',color:'#ef4444',desc:'Role Based System Permissions Firewall'},
+    {id:7,x:W*.85,y:H*.5,r:8,label:'Vectors',color:'#a78bfa',desc:'Multidimensional Embedding Vectors Store'},
+    {id:8,x:W*.4,y:H*.8,r:8,label:'Analytics',color:'#00C853',desc:'Runtime Performance Usage Metric Aggregators'},
+    {id:9,x:W*.6,y:H*.8,r:8,label:'Team',color:'#FFD700',desc:'Collaborative Core Access Synchronization Hub'},
+  ];
+  nodesGlobal = nodes;
+  
+  const edges=[[0,1],[0,2],[0,3],[0,4],[1,5],[3,6],[4,7],[0,8],[0,9],[1,2],[2,7],[8,9]];
+  let t=0;
+  
+  // Canvas tracking events
+  const overlay = document.getElementById('graph-node-overlay');
+  canvas.onmousemove = function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    let hoveredNode = null;
+    
+    nodes.forEach(n => {
+      const dist = Math.sqrt((mx - n.x)**2 + (my - n.y)**2);
+      if (dist <= n.r + 5) {
+        hoveredNode = n;
+      }
+    });
+    
+    if (hoveredNode) {
+      overlay.style.display = 'block';
+      overlay.style.left = (mx + 15) + 'px';
+      overlay.style.top = (my + 15) + 'px';
+      overlay.innerHTML = `<strong>${hoveredNode.label}</strong><br><span style="color:var(--muted); font-size:11px;">${hoveredNode.desc}</span>`;
+      canvas.style.cursor = 'pointer';
+    } else {
+      overlay.style.display = 'none';
+      canvas.style.cursor = 'default';
+    }
+  };
+  
+  if(canvasAnimationId) cancelAnimationFrame(canvasAnimationId);
+
+  function draw(){
+    if (targetPageGlobal !== 'graph') return;
+    ctx.clearRect(0,0,W,H);
+    
+    // Draw structural connections
+    edges.forEach(([a,b])=>{
+      const na=nodes[a],nb=nodes[b];
+      ctx.beginPath();ctx.moveTo(na.x,na.y);ctx.lineTo(nb.x,nb.y);
+      ctx.strokeStyle='rgba(0,200,83,0.15)';ctx.lineWidth=1;ctx.stroke();
+    });
+    
+    // Draw vector vertices points
+    nodes.forEach((n,i)=>{
+      const pulse=1+Math.sin(t*0.04+i)*0.08;
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r*pulse,0,Math.PI*2);
+      ctx.fillStyle=n.color+'22';ctx.fill();
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle=n.color+'88';ctx.fill();
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.strokeStyle=n.color;ctx.lineWidth=1.5;ctx.stroke();
+      
+      ctx.fillStyle=n.id===0?'#000':'#fff';
+      ctx.font=`${n.r>12?'11':'9'}px sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(n.label,n.x,n.y+(n.r>12?0:n.r+12));
+    });
+    t++;
+    canvasAnimationId = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// Analytics bars builder
+function buildBars(){
+  const vals=[62,45,78,55,90,38,72];
+  const el=document.getElementById('usage-chart');
+  if(!el)return;
+  el.innerHTML=vals.map((v, i)=> {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return `<div class="bar" style="height:${v}%" title="${days[i]}: ${v * 12} queries" onclick="showToast('${days[i]} load factor evaluated at ${v}% payload limit.')"></div>`;
+  }).join('');
+}
+
+// Auto load simulator if parameters direct 
+window.addEventListener('resize', () => {
+  if (targetPageGlobal === 'graph') initGraph();
+});
+<div id="threat-log-container">
+            <div class="threat-item">
+              <div class="threat-dot" style="background:var(--danger)"></div>
+              <div class="threat-info">
+                <div class="threat-name">Anomalous API Traffic</div>
+                <div class="threat-detail">Rate limit exceeded on /api/v1/research</div>
+              </div>
+              <span class="threat-badge badge-high">High</span>
+            </div>
+            <div class="threat-item">
+              <div class="threat-dot" style="background:var(--gold)"></div>
+              <div class="threat-info">
+                <div class="threat-name">Failed Admin Login</div>
+                <div class="threat-detail">2 failed attempts from IP 192.168.1.50</div>
+              </div>
+              <span class="threat-badge badge-med">Medium</span>
+            </div>
+          </div>
+        </div> </div> </div> </div> </div> <div id="auth-modal" class="modal-overlay">
+  <div class="auth-card">
+    <button class="auth-close" onclick="closeAuth()">×</button>
+    <div class="auth-title">Welcome to KnowNet X</div>
+    <div class="auth-sub">Sign in to access your intelligence network</div>
+    <button class="auth-submit" onclick="loginDemo()">Sign In (Demo)</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// Toggle Authentication Modal
+function showAuth() {
+  document.getElementById('auth-modal').classList.add('show');
+}
+function closeAuth() {
+  document.getElementById('auth-modal').classList.remove('show');
+}
+
+// Simulate Demo Login to access dashboard
+function loginDemo() {
+  closeAuth();
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('dashboard').classList.add('active');
+  showToast('Welcome back, Salman R. Secure session initialized.');
+}
+
+// Return to Landing Page
+function goHome() {
+  document.getElementById('dashboard').classList.remove('active');
+  document.getElementById('landing').style.display = 'flex';
+}
+
+// Handle Sidebar Navigation Switcher
+function setPage(pageId, element) {
+  // Update Active Sidebar Link Visuals
+  document.querySelectorAll('.sb-item').forEach(item => item.classList.remove('active'));
+  element.classList.add('active');
+
+  // Switch Visible Page Panel
+  document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+  const targetPage = document.getElementById('p-' + pageId);
+  if (targetPage) targetPage.classList.add('active');
+}
+
+// Toast Notification System
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.innerText = message;
+  toast.classList.add('show');
+  setTimeout(() => { toast.classList.remove('show'); }, 4000);
+}
+
+// Interactive Live Search Feature
+function handleLiveSearch(query) {
+  const lowercaseQuery = query.toLowerCase();
+  // Live search elements on current active page context (e.g. Knowledge cards)
+  document.querySelectorAll('.kb-card, .act-item, .threat-item').forEach(item => {
+    const text = item.innerText.toLowerCase();
+    item.style.display = text.includes(lowercaseQuery) ? '' : 'none';
+  });
+}
+
+// Mock Function Placeholders to prevent click breaks
+function logout() { goHome(); showToast('Logged out securely.'); }
+function openEntryModal() { showToast('Knowledge entry creation modal placeholder'); }
+function runResearch() { showToast('Initializing multi-agent graph extraction pipeline...'); }
+function handleResearch(e) { if(e.key === 'Enter') runResearch(); }
+</script>
+
+</script>
+</body>
+</html>
