@@ -15,18 +15,18 @@ KnowNet X is an enterprise-grade **AI-Powered Knowledge Intelligence Platform** 
 ## Vision
 
 Transform information into intelligence through:
-- 🧠 **AI Research Engine** - Deep research with source validation
-- 🔗 **Knowledge Graph** - Visual relationship mapping
-- 💾 **Memory System** - Long-term semantic memory
-- 🛡️ **Cybersecurity Hub** - Threat monitoring and vault
-- 👥 **Team Collaboration** - Real-time workspace
-- 📊 **Analytics Engine** - Beautiful dashboards
-- 🤖 **Multi-Agent Architecture** - Research, Memory, Learning, Security agents
-- 🔐 **Enterprise Security** - RBAC, MFA, Encryption, Audit logs
+-  **AI Research Engine** - Deep research with source validation
+-  **Knowledge Graph** - Visual relationship mapping
+-  **Memory System** - Long-term semantic memory
+-  **Cybersecurity Hub** - Threat monitoring and vault
+-  **Team Collaboration** - Real-time workspace
+-  **Analytics Engine** - Beautiful dashboards
+-  **Multi-Agent Architecture** - Research, Memory, Learning, Security agents
+-  **Enterprise Security** - RBAC, MFA, Encryption, Audit logs
 
 ## Features
 
-### 🎯 Core Features
+###  Core Features
 - **AI Search Engine** - Semantic search powered by LangGraph
 - **Knowledge Graph** - Connected notes with relationship visualization
 - **Document Intelligence** - AI-powered document analysis
@@ -46,7 +46,7 @@ Transform information into intelligence through:
 - API rate limiting and gateway protection
 - Real-time threat detection
 
-### 🏗️ Architecture
+###  Architecture
 
 #### Frontend Stack
 ```
@@ -91,10 +91,10 @@ Transform information into intelligence through:
 ### Theme: Ancient Arabic × Modern Cyber
 
 **Color Palette:**
-- 🟢 Emerald Green: `#00C853` (Primary)
-- 🟢 Dark Emerald: `#003D29` (Secondary)
-- ✨ Gold Accent: `#FFD700` (Highlights)
-- ⬛ Matte Black: `#0D1117` (Background)
+-  Emerald Green: `#00C853` (Primary)
+-  Dark Emerald: `#003D29` (Secondary)
+-  Gold Accent: `#FFD700` (Highlights)
+-  Matte Black: `#0D1117` (Background)
 
 **Design Elements:**
 - Glassmorphism with soft effects
@@ -304,11 +304,11 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ## Contact & Support
 
-- 📧 Email: support@knownet.ai
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/knownet-x/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/knownet-x/discussions)
-- 🌐 Website: [knownet.ai](https://knownet.ai)
+-  Email: support@knownet.ai
+-  Issues: [GitHub Issues](https://github.com/yourusername/knownet-x/issues)
+-  Discussions: [GitHub Discussions](https://github.com/yourusername/knownet-x/discussions)
+-  Website: [knownet.ai](https://knownet.ai)
 
 ---
 
-**Made with 💚 by the KnowNet X team**
+**Made with  by the KnowNet X team**
